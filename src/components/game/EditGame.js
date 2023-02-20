@@ -29,10 +29,10 @@ export const EditGame = () => {
         })
     }, [])
 
-    const changeGameState = (domEvent) => {
+    const changeGameState = (domGame) => {
         // TODO: Complete the onChange function
         const copy = {...currentGame}
-        copy[domEvent.target.name] = domEvent.target.value
+        copy[domGame.target.name] = domGame.target.value
         setCurrentGame(copy)
     }
 
