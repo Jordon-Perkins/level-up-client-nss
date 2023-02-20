@@ -7,7 +7,7 @@ import { getGames } from '../../managers/GameManager.js'
 export const EditEvent = () => {
     const navigate = useNavigate()
     const { eventId } = useParams()
-    const [gameId, setGameId] = useState([])
+    const [games, setGames] = useState([])
 
     /*
         Since the input fields are bound to the values of
@@ -19,16 +19,18 @@ export const EditEvent = () => {
             time: "",
             description: "",
             organizer: {},
-            gameId: {}
+            game: {}
         })
 
         useEffect(() => {
+            getGames().then(res => setGames(res))
             getEvent(eventId).then(res => {
+                // get response from server then set value of key gameTypeId to pk int of game_type object
+                res.gameId = res.game.id
                 setCurrentEvent(res)
             })
-            // TODO: Get the game, then set the state
-            getGames().then(data => setGameId(data))
-        }, [])
+        }, 
+        [eventId])
 
     const changeEventState = (domEvent) => {
         // TODO: Complete the onChange function
@@ -44,14 +46,14 @@ export const EditEvent = () => {
             <fieldset>
                 <div className="form-group">
                     <label htmlFor="gameId">Game for the Event: </label>
-                    <select required autoFocus className="gameList" value={currentEvent?.game?.id}
+                    <select required autoFocus className="gameList" value={currentEvent.game.id}
                         onChange={(evt) => {
                             const copy = {...currentEvent}
-                            copy.gameId = parseInt(evt.target.value)
+                            copy.game = parseInt(evt.target.value)
                             setCurrentEvent(copy)
                     }}
                     ><option name="gameId" className="game" >Select Game</option>
-                        {gameId.map(game => {
+                        {games.map(game => {
                             // console.log(game)
                                 return <option
                                     name="gameId"
@@ -102,7 +104,7 @@ export const EditEvent = () => {
                     evt.preventDefault()
 
                     
-                    updateEvent(gameId, currentEvent)
+                    updateEvent(eventId, currentEvent)
                         .then(() => navigate("/events"))
                 }}
                 className="btn btn-primary">Update</button>
